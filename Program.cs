@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TicTacToe
@@ -16,9 +17,15 @@ namespace TicTacToe
             //OX표시 기본 Y좌표 :  3   +6 씩 y한칸
             //기본 별 X좌표 : 10  +15씩  x한칸
             //기본 별 Y좌표 : 5  +6씩 y한칸
-            int[,] board = new int[3,3];//3x3틱택토판이될 int형 배열
             const int USER_PICK = 40; //int형 배열에 값을 변경해줄 임의의 유저값
             const int CPU_PICK = 50;//int형 배열에 값을 변경해줄 임의의 cpu값
+            int winCount = 0;
+            int loseCount = 0;
+            int drawCount = 0;
+            while (true) 
+            {
+                CursorPosition(0, 0);
+            int[,] board = new int[3,3];//3x3틱택토판이될 int형 배열
             int posX = 10;//별이 움직일 X좌표
             int posY = 5;//별이 움직일 Y좌표
             int boardPosX = 0;//실질적으로 배열의 주소값에서 움직일 X좌표
@@ -27,16 +34,21 @@ namespace TicTacToe
             int cpuPosX = 0;//CPU가 선택할 배열의 주소값 X좌표
             int cpuPosY = 0;//CPU가 선택할 배열의 주소값 Y좌표
 
-
+            Console.SetWindowSize(55, 30);
+            
             DrawBoard();
+
             Console.WriteLine("=================================================");
             Console.WriteLine("                    TIC TAC TOE");
             Console.WriteLine("=================================================");
             Console.WriteLine();
-            Console.WriteLine("            [ W ] ");
-            Console.WriteLine(" 이동  [ A ][ S ][ D ]              확인 [ ENTER ]              ");
+            Console.WriteLine("{0} 승 {1} 패 {2} 무",winCount,loseCount,drawCount);
 
-            while (true)//while
+                Console.WriteLine("            [ W ] ");
+            Console.WriteLine(" 이동  [ A ][ S ][ D ]              확인 [ ENTER ]              ");
+                CursorPosition(posX, posY);
+                Console.Write("★");
+                while (true)//while
             {
                 CursorPosition(0, 0);
              
@@ -194,12 +206,12 @@ namespace TicTacToe
                int indexX = 0;
                 for (int x = 0; x < 3; x++)
                 {
-                    if (board[y, x] == 40)
+                    if (board[y, x] == USER_PICK)
                     {
                         CursorPosition(0, 0);
                         DrawX(6 + indexX, 3 + indexY);
                     }
-                    else if (board[y, x] == 50)
+                    else if (board[y, x] == CPU_PICK)
                     {
                         CursorPosition(0, 0);
                         DrawO(6 + indexX, 3 + indexY);
@@ -208,29 +220,45 @@ namespace TicTacToe
                 }
                 indexY += 6;
             }
+            CursorPosition(0, 20);
+
             Console.WriteLine();
             Console.WriteLine("=================================================");
             Console.WriteLine("                    TIC TAC TOE");
             Console.WriteLine("=================================================");
             if (MyWin(board, USER_PICK))//유저의 승리체크
             {
-
+                CursorPosition(0, 24);
                 Console.WriteLine();
                 Console.WriteLine("=================================================");
                 Console.WriteLine("                 플레이어의 승리.");
                 Console.WriteLine("=================================================");
-
+                    winCount += 1;
 
             }
             else if (MyWin(board, CPU_PICK))//CPU의 승리체크
             {
+                CursorPosition(0, 24);
 
                 Console.WriteLine();
                 Console.WriteLine("=================================================");
                 Console.WriteLine("                 컴퓨터의 승리.");
                 Console.WriteLine("=================================================");
+                    loseCount += 1;
 
+            }
+            else if (MyWin(board, CPU_PICK) == false && MyWin(board, USER_PICK)==false)
+            {
+                CursorPosition(0, 24);
 
+                Console.WriteLine();
+                Console.WriteLine("=================================================");
+                Console.WriteLine("                   비겼습니다.");
+                Console.WriteLine("=================================================");
+                    drawCount += 1;
+            }
+            Thread.Sleep(2000);
+                Console.Clear();
             }
 
 
@@ -283,6 +311,7 @@ namespace TicTacToe
         static void CursorPosition(int x, int y)//커서포지션 지정
         {
             Console.SetCursorPosition(x, y);
+
         }//커서포지션 지정
         static void DrawX(int x,int y)//X그리기
         {
